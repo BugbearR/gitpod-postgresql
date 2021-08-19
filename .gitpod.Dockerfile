@@ -1,6 +1,6 @@
 FROM gitpod/workspace-postgres:latest
 
-RUN apt-get update
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libpq-dev \
         libecpg-dev \
