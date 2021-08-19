@@ -1,8 +1,10 @@
 FROM gitpod/workspace-postgres:latest
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+USER gitpod
+
+RUN sudo apt-get update \
+    && sudo apt-get install -yq --no-install-recommends \
         libpq-dev \
         libecpg-dev \
-    && apt-get -y clean \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo apt-get -y clean \
+    && sudo rm -rf /var/lib/apt/lists/*
