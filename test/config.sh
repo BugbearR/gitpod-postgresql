@@ -1,1 +1,1 @@
-PSQL_CONNECT_OPTION="sampledb"
+PSQL_CONNECT_OPTIONS="sampledb"

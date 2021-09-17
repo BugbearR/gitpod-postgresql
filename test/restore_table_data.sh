@@ -28,13 +28,13 @@ askYesNo "restore tables. ok?" || exit 1
 
 function psql_backup_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTION -c "\\copy $1 to '$2' with delimiter E'\\t'"
+    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 to '$2' with delimiter E'\\t'"
 }
 
 function psql_restore_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTION -c "truncate $1;"
-    psql $PSQL_CONNECT_OPTION -c "\\copy $1 from '$2' with delimiter E'\\t'"
+    psql $PSQL_CONNECT_OPTIONS -c "truncate $1;"
+    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 from '$2' with delimiter E'\\t'"
 }
 
 mkdir -p data_before_restore

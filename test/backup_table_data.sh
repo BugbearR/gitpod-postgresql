@@ -16,7 +16,7 @@ askYesNo "backup tables. ok?" || exit 1
 
 function psql_backup_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTION -c "\\copy $1 to '$2' with delimiter E'\\t'"
+    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 to '$2' with delimiter E'\\t'"
 }
 
 mkdir -p data
