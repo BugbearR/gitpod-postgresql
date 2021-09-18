@@ -1,9 +1,9 @@
 #!/bin/sh
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
-TIMESTAMP=$(date "+%Y%m%dT%H%M%S")
-
-. ./common.sh
-. ./config.sh
+. "$SCRIPT_DIR"/config.sh
+. "$SCRIPT_DIR"/common.sh
 
 NAME=${1:-$TIMESTAMP}
 
@@ -12,11 +12,16 @@ if [ -e data/$NAME ]; then
     exit 1
 fi
 
+if [ \( ! -f target_tables.txt \) -o \( ! -r target_tables.txt \) ]; then
+    echo please create target_tables.txt
+    exit 1
+fi
+
 askYesNo "backup tables. ok?" || exit 1
 
-function psql_backup_table_tsv()
+psql_backup_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 to '$2' with delimiter E'\\t'"
+    ${PSQL} -c "\\copy $1 to '$2' with delimiter E'\\t'"
 }
 
 mkdir -p data

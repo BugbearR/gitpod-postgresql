@@ -1,9 +1,9 @@
 #!/bin/sh
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
-TIMESTAMP=$(date "+%Y%m%dT%H%M%S")
-
-. ./common.sh
-. ./config.sh
+. "$SCRIPT_DIR"/config.sh
+. "$SCRIPT_DIR"/common.sh
 
 if [ $# -lt 1 ]; then
     echo usage $0 backup_name
@@ -11,7 +11,7 @@ fi
 
 NAME=$1
 
-if [ ! -e data/$NAME ]; then
+if [ ! -e "$DATA_DIR"/$NAME ]; then
     echo data/$NAME is not found.
     exit 1
 fi
@@ -26,15 +26,15 @@ done < target_tables.txt
 
 askYesNo "restore tables. ok?" || exit 1
 
-function psql_backup_table_tsv()
+psql_backup_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 to '$2' with delimiter E'\\t'"
+    ${PSQL} -c "\\copy $1 to '$2' with delimiter E'\\t'"
 }
 
-function psql_restore_table_tsv()
+psql_restore_table_tsv()
 {
-    psql $PSQL_CONNECT_OPTIONS -c "truncate $1;"
-    psql $PSQL_CONNECT_OPTIONS -c "\\copy $1 from '$2' with delimiter E'\\t'"
+    ${PSQL} -c "truncate $1;"
+    ${PSQL} -c "\\copy $1 from '$2' with delimiter E'\\t'"
 }
 
 mkdir -p data_before_restore

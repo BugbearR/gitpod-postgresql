@@ -1,12 +1,13 @@
 #!/bin/sh
+set -eu
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
-. ./config.sh
+. "$SCRIPT_DIR"/config.sh
+. "$SCRIPT_DIR"/common.sh
 
-# psql -Aqt --csv <<__EOT__
-psql $PSQL_CONNECT_OPTIONS -Aqt -F "$(printf '\t')" <<__EOT__
+${PSQL} -Aqt -F "$(printf '\t')" <<__EOT__
 SELECT
-    table_schema,
-    table_name,
+    table_schema || '.' || table_name,
     table_type
 FROM
     information_schema.tables
