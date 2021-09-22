@@ -5,6 +5,8 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 . "$SCRIPT_DIR"/config.sh
 . "$SCRIPT_DIR"/common.sh
 
+TARGET_TABLES_FILE="$SCRIPT_DIR"/target_tables.txt
+
 if [ $# -lt 1 ]; then
     echo usage $0 backup_name
 fi
@@ -22,20 +24,9 @@ do
         echo "can't read data/$NAME/$table.tsv . stop."
         exit 1
     fi
-done < target_tables.txt
+done < "$TARGET_TABLES_FILE"
 
 askYesNo "restore tables. ok?" || exit 1
-
-psql_backup_table_tsv()
-{
-    ${PSQL} -c "\\copy $1 to '$2' with delimiter E'\\t'"
-}
-
-psql_restore_table_tsv()
-{
-    ${PSQL} -c "truncate $1;"
-    ${PSQL} -c "\\copy $1 from '$2' with delimiter E'\\t'"
-}
 
 mkdir -p data_before_restore
 mkdir data_before_restore/$TIMESTAMP
@@ -47,9 +38,9 @@ fi
 while read table
 do
     psql_backup_table_tsv $table data_before_restore/$TIMESTAMP/$table.tsv
-done < target_tables.txt
+done < "$TARGET_TABLES_FILE"
 
 while read table
 do
     psql_restore_table_tsv $table data/$NAME/$table.tsv
-done < target_tables.txt
+done < "$TARGET_TABLES_FILE"

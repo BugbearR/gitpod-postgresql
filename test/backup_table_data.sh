@@ -7,22 +7,19 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 NAME=${1:-$TIMESTAMP}
 
+TARGET_TABLES_FILE="$SCRIPT_DIR"/target_tables.txt
+
 if [ -e data/$NAME ]; then
     echo data/$NAME is already exist.
     exit 1
 fi
 
-if [ \( ! -f target_tables.txt \) -o \( ! -r target_tables.txt \) ]; then
-    echo please create target_tables.txt
+if [ \( ! -f "$TARGET_TABLES_FILE" \) -o \( ! -r "$TARGET_TABLES_FILE" \) ]; then
+    echo please create $TARGET_TABLES_FILE
     exit 1
 fi
 
 askYesNo "backup tables. ok?" || exit 1
-
-psql_backup_table_tsv()
-{
-    ${PSQL} -c "\\copy $1 to '$2' with delimiter E'\\t'"
-}
 
 mkdir -p data
 mkdir data/$NAME
@@ -34,4 +31,4 @@ fi
 while read table
 do
     psql_backup_table_tsv $table data/$NAME/$table.tsv
-done < target_tables.txt
+done < "$TARGET_TABLES_FILE"
